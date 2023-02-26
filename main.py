@@ -27,7 +27,14 @@ search_bar.send_keys(Keys.ENTER)
 
 # wait for javascript loading
 shitty_element = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "g-blk")))
-print(shitty_element)
+
+browser.execute_script(
+    """
+const shitty = arguments[0];
+shitty.parentElement.removeChild(shitty)
+""", 
+    shitty_element
+)
 
 # find elements
 search_results = browser.find_elements(By.CLASS_NAME, "g")
@@ -35,9 +42,8 @@ search_results = browser.find_elements(By.CLASS_NAME, "g")
 # find element what I want to
 for index, search_result in enumerate(search_results):
     class_name = search_result.get_attribute("class")
-    if "g-blk" not in class_name:
-        title = search_result.find_element(By.TAG_NAME, "h3")
-        if title.size['height'] != 0 and "liYKde" not in class_name:
+    title = search_result.find_element(By.TAG_NAME, "h3")
+    if title.size['height'] != 0 and "liYKde" not in class_name:
             search_result.screenshot(f"screenshots/{KEYWORD}x{index}.png")
 
 browser.quit()
